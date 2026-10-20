@@ -1,12 +1,15 @@
 import mongoose from "mongoose";
 
 const connectDB = async () => {
-  try {
-    const conn = await mongoose.connect(`${process.env.MONGODB_URL}/mern-auth`);
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.log(`Error: ${error.message}`);
+  if (!process.env.MONGODB_URL) {
+    throw new Error("MONGODB_URL is missing from server/.env");
   }
+
+  const conn = await mongoose.connect(process.env.MONGODB_URL, {
+    dbName: process.env.MONGODB_DB_NAME || "mern-auth",
+    serverSelectionTimeoutMS: 10000,
+  });
+  console.log(`MongoDB Connected: ${conn.connection.host}`);
 };
 
 export default connectDB;
